@@ -5,6 +5,7 @@ namespace Juzaweb\Subscription\Manage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Juzaweb\Subscription\Models\Package;
+use Juzaweb\Subscription\Models\SubscriptionHistory;
 
 abstract class SubscriptionDriver
 {
@@ -12,16 +13,17 @@ abstract class SubscriptionDriver
     /**
      * @var Package $package
      */
-    protected $package;
+    protected Package $package;
 
     public function __construct($driver)
     {
         $this->driver = $driver;
     }
 
-    public function setPackage(Package $package)
+    public function setPackage(Package $package): static
     {
         $this->package = $package;
+
         return $this;
     }
 
@@ -33,7 +35,7 @@ abstract class SubscriptionDriver
 
     /**
      * @param Request $request
-     * @return \Juzaweb\Subscription\Models\SubscriptionHistory
+     * @return SubscriptionHistory
      */
     abstract public function notify(Request $request);
 
@@ -47,6 +49,7 @@ abstract class SubscriptionDriver
     protected function getConfig()
     {
         $data = get_config('subscription');
+
         return Arr::get($data, $this->driver, []);
     }
 }
